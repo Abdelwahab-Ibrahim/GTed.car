@@ -6,6 +6,7 @@ const verifyJWT = require('../middleware/verifyJWT');
 const uploadCar = require('../middleware/uploadCarImages');
 
 router.get('/list', car.getCars);
+router.get('/my-cars', verifyJWT, car.getMyCars);
 router.get('/:id', car.getOneCar);
 router.post('/', verifyJWT, uploadCar.array('images', 2), car.creatCar);
 router.patch('/:id', verifyJWT, car.updateCar);

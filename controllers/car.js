@@ -25,6 +25,26 @@ module.exports = {
         }
     },
 
+    //            ---------------------- Get My Cars (User's Listed Cars) ------------------------
+
+    getMyCars: async (req, res) => {
+        try {
+            const cars = await Car.find({ sellerid: req.userid }).select('manufacturer model year price available images');
+            const result = cars.map(c => ({
+                id: c._id,
+                manufacturer: c.manufacturer,
+                model: c.model,
+                year: c.year,
+                price: c.price,
+                available: c.available,
+                image: `/uploads/cars/${c.images.exterior}`
+            }));
+            res.status(200).json(result);
+        } catch (error) {
+            res.status(500).json({ message: 'Error fetching your cars', error: error.message });
+        }
+    },
+
     //            ---------------------- Get One Car ------------------------
 
     getOneCar: async (req, res) => {
@@ -157,11 +177,11 @@ module.exports = {
 
             if (car.images.exterior) {
                 const exteriorpath = path.join(__dirname, '../uploads/cars', car.images.exterior);
-                await fsPromises.unlink(exteriorpath).catch(() => {});
+                await fsPromises.unlink(exteriorpath).catch(() => { });
             }
             if (car.images.interior) {
                 const interiorpath = path.join(__dirname, '../uploads/cars', car.images.interior);
-                await fsPromises.unlink(interiorpath).catch(() => {});
+                await fsPromises.unlink(interiorpath).catch(() => { });
             }
 
             await car.deleteOne();
