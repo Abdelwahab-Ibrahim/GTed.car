@@ -5,12 +5,15 @@
 http://localhost:3000
 ```
 
+## Frontend
+The frontend is served from the root path (`/`) as a single-page application (SPA). Static assets are served from `/dist/`.
+
 ---
 
-## Authentication Routes (`/auth`)
+## Authentication Routes (`/api/auth`)
 
 ### 1. Register
-**Endpoint:** `POST /auth/register`  
+**Endpoint:** `POST /api/auth/register`  
 **Auth Required:** No  
 **Description:** Create a new user account
 
@@ -39,7 +42,7 @@ http://localhost:3000
 ---
 
 ### 2. Login
-**Endpoint:** `POST /auth/login`  
+**Endpoint:** `POST /api/auth/login`  
 **Auth Required:** No  
 **Description:** Authenticate user and receive access token
 
@@ -69,7 +72,7 @@ http://localhost:3000
 ---
 
 ### 3. Logout
-**Endpoint:** `POST /auth/logout`  
+**Endpoint:** `POST /api/auth/logout`  
 **Auth Required:** No  
 **Description:** Clear refresh token and logout user
 
@@ -85,7 +88,7 @@ http://localhost:3000
 ---
 
 ### 4. Refresh Token
-**Endpoint:** `POST /auth/refresh`  
+**Endpoint:** `POST /api/auth/refresh`  
 **Auth Required:** No (uses cookie)  
 **Description:** Get a new access token using refresh token
 
@@ -105,10 +108,10 @@ http://localhost:3000
 
 ---
 
-## User Routes (`/user`)
+## User Routes (`/api/user`)
 
 ### 1. Update Avatar
-**Endpoint:** `PATCH /user/avatar`  
+**Endpoint:** `PATCH /api/user/avatar`  
 **Auth Required:** Yes (JWT)  
 **Description:** Upload and update user avatar
 
@@ -140,7 +143,7 @@ http://localhost:3000
 ---
 
 ### 2. Update Profile
-**Endpoint:** `PATCH /user/profile`  
+**Endpoint:** `PATCH /api/user/profile`  
 **Auth Required:** Yes (JWT)  
 **Description:** Update user profile information
 
@@ -175,7 +178,7 @@ http://localhost:3000
 ---
 
 ### 3. Get Me
-**Endpoint:** `GET /user/getMe`  
+**Endpoint:** `GET /api/user/getMe`  
 **Auth Required:** Yes (JWT)  
 **Description:** Get current authenticated user's profile
 
@@ -202,10 +205,10 @@ Authorization: Bearer <accessToken>
 
 ---
 
-## Car Routes (`/cars`)
+## Car Routes (`/api/cars`)
 
 ### 1. Get All Available Cars
-**Endpoint:** `GET /cars/list`  
+**Endpoint:** `GET /api/cars/list`  
 **Auth Required:** No  
 **Description:** Get all available cars with minimal details
 
@@ -231,7 +234,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 2. Get My Cars (User's Listed Cars)
-**Endpoint:** `GET /cars/my-cars`  
+**Endpoint:** `GET /api/cars/my-cars`  
 **Auth Required:** Yes (JWT)  
 **Description:** Get all cars listed by authenticated user
 
@@ -261,7 +264,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 3. Get Car Details
-**Endpoint:** `GET /cars/:id`  
+**Endpoint:** `GET /api/cars/:id`  
 **Auth Required:** No  
 **Description:** Get detailed information about a specific car
 
@@ -304,7 +307,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 4. Create Car
-**Endpoint:** `POST /cars/`  
+**Endpoint:** `POST /api/cars/`  
 **Auth Required:** Yes (JWT)  
 **Description:** List a new car for sale
 
@@ -338,7 +341,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 5. Update Car
-**Endpoint:** `PATCH /cars/:id`  
+**Endpoint:** `PATCH /api/cars/:id`  
 **Auth Required:** Yes (JWT)  
 **Description:** Update car details (only seller can update)
 
@@ -375,7 +378,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 6. Delete Car
-**Endpoint:** `DELETE /cars/:id`  
+**Endpoint:** `DELETE /api/cars/:id`  
 **Auth Required:** Yes (JWT)  
 **Description:** Delete car and remove uploaded images (only seller can delete)
 
@@ -397,14 +400,14 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 7. Search Cars
-**Endpoint:** `GET /cars/search`  
+**Endpoint:** `GET /api/cars/search`  
 **Auth Required:** No  
 **Description:** Search available cars by query (manufacturer, model, or color)
 
 **Query Parameters:**
 - `q`: Search query string (required)
 
-**Example:** `GET /cars/search?q=toyota`
+**Example:** `GET /api/cars/search?q=toyota`
 
 **Success Response (200):**
 ```json
@@ -426,10 +429,10 @@ Authorization: Bearer <accessToken>
 
 ---
 
-## Order Routes (`/order`)
+## Order Routes (`/api/orders`)
 
 ### 1. Get User's Orders
-**Endpoint:** `GET /order/list`  
+**Endpoint:** `GET /api/orders/list`  
 **Auth Required:** Yes (JWT)  
 **Description:** Get all orders made by authenticated user
 
@@ -463,7 +466,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 2. Create Order
-**Endpoint:** `POST /order/`  
+**Endpoint:** `POST /api/orders/`  
 **Auth Required:** Yes (JWT)  
 **Description:** Create a new order for a car
 
@@ -494,7 +497,7 @@ Authorization: Bearer <accessToken>
 ---
 
 ### 3. Cancel Order
-**Endpoint:** `DELETE /order/:id`  
+**Endpoint:** `DELETE /api/orders/:id`  
 **Auth Required:** Yes (JWT)  
 **Description:** Cancel an order (only the buyer can cancel their order)
 
