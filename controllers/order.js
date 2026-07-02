@@ -5,12 +5,22 @@ module.exports = {
     getOrders: async (req, res) => {
         try {
             const orders = await Order.find({ userid: req.userid }).populate('carid', 'manufacturer model year price images');
-            const result = orders.map(order => ({
-                id: order._id,
-                car: order.carid,
-                price: order.price,
-                createdAt: order.createdAt
-            }));
+            const result = orders.map(order => {
+                const car = order.carid ? {
+                    id: order.carid._id,
+                    manufacturer: order.carid.manufacturer,
+                    model: order.carid.model,
+                    year: order.carid.year,
+                    price: order.carid.price,
+                    image: order.carid.images && order.carid.images.exterior ? `/uploads/cars/${order.carid.images.exterior}` : null
+                } : null;
+                return {
+                    id: order._id,
+                    car,
+                    price: order.price,
+                    createdAt: order.createdAt
+                };
+            });
             res.status(200).json(result);
         } catch (error) {
             res.status(500).json({ message: error.message });

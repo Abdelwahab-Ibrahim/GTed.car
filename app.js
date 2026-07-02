@@ -30,16 +30,17 @@ app.use('/api/cars', carrouter);
 app.use('/api/orders', orderrouter);
 
 // catch-all route for undefined API routes
-app.all('/api/*splat', (req, res) => {
+app.all(/^\/api\/.*/, (req, res) => {
     res.status(404).json({
         message: 'Route not found'
     });
 });
+
 // serve static files from the dist directory
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // SPA fallback route for all other requests
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
@@ -47,6 +48,6 @@ app.get('*', (req, res) => {
 mongoose.connection.once('open', () => {
     console.log('Connected to MongoDB');
     app.listen(PORT, () => {
-        console.log(`Server is running on ${process.env.BASE_URL}`);
+        console.log(`Server is running on port ${PORT} on url ${process.env.BASE_URL}`);
     });
 });

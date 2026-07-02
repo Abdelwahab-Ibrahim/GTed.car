@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GTed — Car Marketplace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:       #1B1D2B;
+  --surface:  #25283A;
+  --border:   #363B50;
+  --text:     #E8EAF2;
+  --muted:    #9EA4B8;
+  --blue:     #5B7DD9;
+  --blue-dim: #4A6AC0;
+  --green:    #5FA77A;
+  --orange:   #D39A55;
+  --orange-dim:#B8823E;
+  --red:      #C96060;
+  --font-d:   'Barlow Condensed',sans-serif;
+  --font-b:   'Inter',sans-serif;
+  --header-h: 56px;
+}
+
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-b);overflow-x:hidden}
+
+/* ── HEADER ── */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:var(--header-h);
+  background:rgba(27,29,43,0.95);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;padding:0 20px;
+}
+.logo{
+  font-family:var(--font-d);font-size:24px;font-weight:800;letter-spacing:0.1em;
+  color:var(--text);text-decoration:none;white-space:nowrap;flex-shrink:0;
+}
+.logo b{color:var(--orange)}
+.search-wrap{
+  flex:1;max-width:400px;
+  display:flex;background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;overflow:hidden;
+}
+.search-wrap input{
+  flex:1;background:none;border:none;outline:none;
+  color:var(--text);font-family:var(--font-b);font-size:13px;padding:8px 14px;
+}
+.search-wrap input::placeholder{color:var(--muted)}
+.search-wrap button{
+  background:none;border:none;border-left:1px solid var(--border);
+  padding:0 12px;cursor:pointer;color:var(--muted);font-size:16px;
+  transition:color .15s;
+}
+.search-wrap button:hover{color:var(--orange)}
+.nav-spacer{flex:1}
+.nav-links{display:flex;align-items:center;gap:6px}
+.hbtn{
+  font-family:var(--font-b);font-size:12px;font-weight:500;
+  padding:6px 14px;border-radius:6px;border:none;cursor:pointer;
+  text-decoration:none;display:inline-flex;align-items:center;gap:6px;
+  transition:all .15s;white-space:nowrap;
+}
+.hbtn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.hbtn-ghost:hover{color:var(--text);border-color:var(--blue)}
+.hbtn-blue{background:var(--blue);color:#fff}
+.hbtn-blue:hover{background:var(--blue-dim)}
+.hbtn-orange{background:var(--orange);color:#1B1D2B;font-weight:600}
+.hbtn-orange:hover{background:var(--orange-dim)}
+.avatar-btn{
+  width:32px;height:32px;border-radius:50%;background:var(--blue);
+  color:#fff;font-size:12px;font-weight:600;border:2px solid var(--border);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  text-decoration:none;
+}
+.avatar-btn img{width:100%;height:100%;object-fit:cover}
+
+/* ── PAGE ── */
+#page{
+  margin-top:var(--header-h);
+  min-height:calc(100vh - var(--header-h));
+  padding:28px 24px;
+  max-width:1200px;
+  margin-left:auto;margin-right:auto;
+  margin-top:calc(var(--header-h));
+}
+
+/* ── PAGE HEADER ROW ── */
+.page-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;gap:12px;flex-wrap:wrap}
+.page-title{font-family:var(--font-d);font-size:26px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.page-title span{color:var(--orange)}
+.page-meta{font-size:13px;color:var(--muted)}
+
+/* ── CAR GRID ── */
+.car-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.car-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;cursor:pointer;text-decoration:none;color:inherit;
+  display:block;transition:transform .18s,border-color .18s;position:relative;
+}
+.car-card:hover{transform:translateY(-3px);border-color:var(--blue)}
+.car-thumb{
+  width:100%;height:154px;object-fit:cover;display:block;
+  background:var(--border);position:relative;
+}
+.car-thumb-placeholder{
+  width:100%;height:154px;background:var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:38px;
+}
+.badge{
+  position:absolute;top:8px;padding:3px 8px;border-radius:4px;
+  font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+}
+.badge-sold{right:8px;background:rgba(201,96,96,.88);color:#fff}
+.badge-mine{left:8px;background:rgba(91,125,217,.88);color:#fff}
+.card-body{padding:12px 14px 14px}
+.card-make{font-family:var(--font-d);font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-sub{font-size:12px;color:var(--muted);margin:2px 0 10px}
+.price-tag{
+  display:inline-block;background:var(--orange);color:#1B1D2B;
+  font-family:var(--font-d);font-size:17px;font-weight:800;letter-spacing:.04em;
+  padding:3px 10px;border-radius:4px;
+}
+
+/* ── CAR DETAIL ── */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:720px){.detail-grid{grid-template-columns:1fr}}
+.detail-imgs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.detail-img{border-radius:8px;overflow:hidden;height:200px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:42px}
+.detail-img img{width:100%;height:100%;object-fit:cover}
+.detail-title{font-family:var(--font-d);font-size:36px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;margin-bottom:4px}
+.detail-price{font-family:var(--font-d);font-size:26px;font-weight:800;color:var(--orange);margin-bottom:18px}
+.specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.spec-box{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:10px 12px}
+.spec-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.spec-val{font-size:14px;font-weight:600}
+.seller-strip{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;
+  background:var(--bg);border:1px solid var(--border);border-radius:8px;margin-bottom:18px;
+}
+.seller-av{width:36px;height:36px;border-radius:50%;background:var(--blue);color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.seller-av img{width:100%;height:100%;object-fit:cover}
+.action-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{
+  font-family:var(--font-b);font-size:13px;font-weight:500;
+  padding:9px 20px;border-radius:7px;border:none;cursor:pointer;
+  transition:all .15s;
+}
+.btn-primary{background:var(--orange);color:#1B1D2B;font-weight:600}
+.btn-primary:hover{background:var(--orange-dim)}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--blue);color:var(--blue)}
+.btn-danger{background:transparent;color:var(--red);border:1px solid var(--red)}
+.btn-danger:hover{background:var(--red);color:#fff}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{background:var(--blue-dim)}
+.btn-full{width:100%}
+
+/* ── PROFILE PAGE ── */
+.profile-layout{display:grid;grid-template-columns:240px 1fr;gap:20px}
+@media(max-width:640px){.profile-layout{grid-template-columns:1fr}}
+.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;text-align:center}
+.profile-av-lg{width:72px;height:72px;border-radius:50%;background:var(--blue);color:#fff;font-size:26px;font-weight:700;display:flex;align-items:center;justify-content:center;overflow:hidden;margin:0 auto 12px}
+.profile-av-lg img{width:100%;height:100%;object-fit:cover}
+.profile-name{font-size:16px;font-weight:600;margin-bottom:2px}
+.profile-email{font-size:12px;color:var(--muted);margin-bottom:16px}
+.profile-form-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px}
+.section-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:16px}
+.card-title{font-family:var(--font-d);font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+
+/* ── FORMS ── */
+.form-group{margin-bottom:14px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:500px){.form-row{grid-template-columns:1fr}}
+label.lbl{display:block;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.inp{
+  width:100%;padding:9px 12px;
+  background:var(--bg);border:1px solid var(--border);border-radius:7px;
+  color:var(--text);font-family:var(--font-b);font-size:13px;outline:none;
+  transition:border-color .15s;
+}
+.inp:focus{border-color:var(--blue)}
+.file-lbl{
+  display:flex;align-items:center;gap:8px;padding:9px 12px;
+  background:var(--bg);border:1px dashed var(--border);border-radius:7px;
+  cursor:pointer;font-size:13px;color:var(--muted);transition:border-color .15s;
+}
+.file-lbl:hover{border-color:var(--blue);color:var(--text)}
+input[type=file]{display:none}
+.form-msg{font-size:12px;margin-top:10px;text-align:center;padding:8px;border-radius:6px}
+.form-err{background:rgba(201,96,96,.12);color:var(--red);border:1px solid rgba(201,96,96,.25)}
+.form-ok{background:rgba(95,167,122,.12);color:var(--green);border:1px solid rgba(95,167,122,.25)}
+
+/* ── AUTH PAGE ── */
+.auth-wrap{max-width:400px;margin:40px auto}
+.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:32px}
+.auth-title{font-family:var(--font-d);font-size:26px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.auth-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.tab-row{display:flex;gap:4px;margin-bottom:22px;background:var(--bg);border-radius:8px;padding:4px}
+.tab{flex:1;padding:7px;border-radius:6px;border:none;font-family:var(--font-b);font-size:13px;font-weight:500;cursor:pointer;background:transparent;color:var(--muted);transition:all .15s}
+.tab.on{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+
+/* ── ORDERS ── */
+.order-row{
+  display:flex;align-items:center;gap:14px;padding:14px 16px;
+  background:var(--surface);border:1px solid var(--border);border-radius:9px;margin-bottom:10px;
+  text-decoration:none;color:inherit;cursor:pointer;transition:border-color .15s;
+}
+.order-row:hover{border-color:var(--blue)}
+.order-thumb{width:72px;height:52px;border-radius:6px;object-fit:cover;background:var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden}
+.order-thumb img{width:100%;height:100%;object-fit:cover}
+.order-info{flex:1;min-width:0}
+.order-name{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.order-date{font-size:12px;color:var(--muted);margin-top:2px}
+.order-price{font-family:var(--font-d);font-size:20px;font-weight:800;color:var(--orange);flex-shrink:0}
+
+/* ── EMPTY / SPINNER ── */
+.empty{text-align:center;padding:64px 20px;color:var(--muted)}
+.empty-icon{font-size:44px;margin-bottom:14px}
+.empty p{font-size:14px;line-height:1.6}
+.empty a{color:var(--orange);text-decoration:none}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--orange);border-radius:50%;animation:spin .7s linear infinite;margin:60px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── STATUS ── */
+.status-avail{color:var(--green)}
+.status-sold{color:var(--red)}
+
+/* ── BACK ── */
+.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;text-decoration:none;margin-bottom:18px;transition:color .15s}
+.back-link:hover{color:var(--text)}
+
+/* ── BREADCRUMB ── */
+.breadcrumb{font-size:12px;color:var(--muted);margin-bottom:18px}
+.breadcrumb a{color:var(--muted);text-decoration:none}
+.breadcrumb a:hover{color:var(--orange)}
+.breadcrumb span{margin:0 6px}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:20px;right:20px;z-index:999;
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  padding:11px 18px;font-size:13px;opacity:0;transform:translateY(6px);
+  transition:all .2s;pointer-events:none;max-width:300px;
+}
+#toast.show{opacity:1;transform:translateY(0)}
+#toast.ok{border-left:3px solid var(--green)}
+#toast.err{border-left:3px solid var(--red)}
+
+/* ── EDIT FORM INLINE ── */
+.inline-form{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;margin-top:14px}
+
+@media(max-width:520px){
+  header{padding:0 12px;gap:8px}
+  #page{padding:20px 14px}
+  .detail-imgs{grid-template-columns:1fr}
+  .detail-img{height:160px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="#/cars">GT<b>ed</b></a>
+  <div class="search-wrap">
+    <input id="searchInput" type="text" placeholder="Search make, model, color…" onkeydown="if(event.key==='Enter')doSearch()"/>
+    <button onclick="doSearch()" title="Search">⌕</button>
+  </div>
+  <div class="nav-spacer"></div>
+  <nav class="nav-links" id="navLinks"></nav>
+</header>
+
+<div id="page"><div class="spinner"></div></div>
+
+<div id="toast"></div>
+
+<script>
+const BASE = 'http://localhost:3000';
+let accessToken = null;
+let currentUser = null;
+let refreshTimer = null;
+
+/* ═══════════════════════════════════════
+   API
+═══════════════════════════════════════ */
+async function api(path, opts = {}) {
+  const headers = { ...(opts.headers || {}) };
+  if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;
+  if (opts.json) { headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(opts.json); delete opts.json; }
+  const res = await fetch(BASE + path, { ...opts, headers, credentials: 'include' });
+  return res;
+}
+
+async function apiJSON(path, opts = {}) {
+  const res = await api(path, opts);
+  let data = null;
+  try { data = await res.json(); } catch {}
+  return { ok: res.ok, status: res.status, data };
+}
+
+/* ═══════════════════════════════════════
+   AUTH / TOKEN
+═══════════════════════════════════════ */
+async function tryRefresh() {
+  try {
+    const res = await fetch(BASE + '/api/auth/refresh', { method: 'POST', credentials: 'include' });
+    if (res.ok) {
+      const d = await res.json();
+      accessToken = d.accessToken;
+      scheduleRefresh();
+      return true;
+    }
+  } catch {}
+  accessToken = null; currentUser = null;
+  return false;
+}
+function scheduleRefresh() {
+  clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(tryRefresh, 35000);
+}
+async function loadMe() {
+  const { ok, data } = await apiJSON('/api/user/getMe');
+  if (ok) { currentUser = data.user; return true; }
+  return false;
+}
+
+/* ═══════════════════════════════════════
+   NAV
+═══════════════════════════════════════ */
+function renderNav() {
+  const el = document.getElementById('navLinks');
+  if (currentUser) {
+    const ini = (currentUser.firstName[0] + currentUser.lastName[0]).toUpperCase();
+    const avHTML = currentUser.avatar
+      ? `<img src="${BASE}${currentUser.avatar}" alt="av"/>`
+      : ini;
+    el.innerHTML = `
+      <a href="#/cars/mine" class="hbtn hbtn-ghost">My Cars</a>
+      <a href="#/orders" class="hbtn hbtn-ghost">Orders</a>
+      <a href="#/cars/new" class="hbtn hbtn-orange">+ List Car</a>
+      <a href="#/profile" class="avatar-btn" title="${currentUser.firstName} ${currentUser.lastName}">${avHTML}</a>
+    `;
+  } else {
+    el.innerHTML = `
+      <a href="#/auth/login" class="hbtn hbtn-ghost">Sign In</a>
+      <a href="#/auth/register" class="hbtn hbtn-orange">Register</a>
+    `;
+  }
+}
+
+/* ═══════════════════════════════════════
+   ROUTER
+═══════════════════════════════════════ */
+const routes = {
+  '/cars':        pageCars,
+  '/cars/mine':   pageMyCars,
+  '/cars/new':    pageNewCar,
+  '/cars/:id':    pageCarDetail,
+  '/orders':      pageOrders,
+  '/orders/:id':  pageOrderDetail,
+  '/profile':     pageProfile,
+  '/auth/login':  () => pageAuth('login'),
+  '/auth/register': () => pageAuth('register'),
+  '/search':      pageSearch,
+};
+
+function matchRoute(hash) {
+  const path = hash.replace(/^#/, '') || '/cars';
+  for (const pattern of Object.keys(routes)) {
+    const paramNames = [];
+    const re = new RegExp('^' + pattern.replace(/:([^/]+)/g, (_, n) => { paramNames.push(n); return '([^/]+)'; }) + '(?:\\?.*)?$');
+    const m = path.match(re);
+    if (m) {
+      const params = {};
+      paramNames.forEach((n, i) => params[n] = m[i + 1]);
+      const qs = path.includes('?') ? path.split('?')[1] : '';
+      const query = Object.fromEntries(new URLSearchParams(qs));
+      return { handler: routes[pattern], params, query };
+    }
+  }
+  return null;
+}
+
+async function route() {
+  const hash = location.hash || '#/cars';
+  const matched = matchRoute(hash);
+  if (!matched) { render(notFound()); return; }
+
+  // auth guard
+  const guarded = ['/cars/mine', '/cars/new', '/orders', '/orders/:id', '/profile'];
+  const needsAuth = guarded.some(p => {
+    const re = new RegExp('^' + p.replace(/:([^/]+)/g, '([^/]+)') + '$');
+    return re.test(hash.replace(/^#/, ''));
+  });
+  if (needsAuth && !currentUser) {
+    location.hash = '/auth/login';
+    return;
+  }
+  await matched.handler(matched.params, matched.query);
+}
+
+window.addEventListener('hashchange', route);
+
+/* ═══════════════════════════════════════
+   RENDER HELPER
+═══════════════════════════════════════ */
+function render(html) {
+  document.getElementById('page').innerHTML = html;
+}
+function setLoading() { render('<div class="spinner"></div>'); }
+
+function fmtPrice(p) { return 'EGP ' + Number(p).toLocaleString('en-EG'); }
+function fmtDate(d) { return new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+
+function notFound() {
+  return `<div class="empty"><div class="empty-icon">🔍</div><p>Page not found. <a href="#/cars">Go home</a></p></div>`;
+}
+
+function toast(msg, type = 'ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `show ${type}`;
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.className = '', 3000);
+}
+
+function breadcrumb(...crumbs) {
+  return `<div class="breadcrumb">${crumbs.map((c, i) => i < crumbs.length - 1 ? `<a href="${c.href}">${c.label}</a><span>›</span>` : `<span style="color:var(--text)">${c.label}</span>`).join('')}</div>`;
+}
+
+/* ═══════════════════════════════════════
+   PAGE: CAR LIST
+═══════════════════════════════════════ */
+async function pageCars() {
+  setLoading();
+  const { ok, data } = await apiJSON('/api/cars/list');
+  if (!ok) { render(`<div class="empty"><div class="empty-icon">⚠️</div><p>Could not reach the server.</p></div>`); return; }
+  const cars = data;
+  render(`
+    <div class="page-top">
+      <div class="page-title">Available <span>Cars</span></div>
+      <div class="page-meta">${cars.length} listing${cars.length !== 1 ? 's' : ''}</div>
+    </div>
+    ${cars.length === 0
+      ? `<div class="empty"><div class="empty-icon">🚗</div><p>No cars listed yet.<br><a href="#/cars/new">List the first one</a></p></div>`
+      : `<div class="car-grid">${cars.map(carCard).join('')}</div>`}
+  `);
+}
+
+function carCard(car, mine = false) {
+  const imgHTML = car.image
+    ? `<img class="car-thumb" src="${BASE}${car.image}" alt="${car.manufacturer}" loading="lazy" onerror="this.outerHTML='<div class=\\'car-thumb-placeholder\\'>🚗</div>'">`
+    : `<div class="car-thumb-placeholder">🚗</div>`;
+  return `
+    <a class="car-card" href="#/cars/${car.id}">
+      ${imgHTML}
+      ${car.available === false ? '<div class="badge badge-sold">Sold</div>' : ''}
+      ${mine ? '<div class="badge badge-mine">Mine</div>' : ''}
+      <div class="card-body">
+        <div class="card-make">${car.manufacturer} ${car.model}</div>
+        <div class="card-sub">${car.year}</div>
+        <div class="price-tag">${fmtPrice(car.price)}</div>
+      </div>
+    </a>`;
+}
+
+/* ═══════════════════════════════════════
+   PAGE: CAR DETAIL
+═══════════════════════════════════════ */
+async function pageCarDetail({ id }) {
+  setLoading();
+  const { ok, data } = await apiJSON(`/api/cars/${id}`);
+  if (!ok) { render(`<div class="empty"><div class="empty-icon">⚠️</div><p>Car not found. <a href="#/cars">Back to listings</a></p></div>`); return; }
+  const { car, seller } = data;
+  const isMine = currentUser && seller._id === currentUser.id;
+
+  const ext = car.images?.exterior ? `<img src="${BASE}${car.images.exterior}" alt="exterior" loading="lazy">` : '🚗';
+  const int_ = car.images?.interior ? `<img src="${BASE}${car.images.interior}" alt="interior" loading="lazy">` : '🪑';
+  const selAv = seller.avatar
+    ? `<img src="${BASE}${seller.avatar}" alt="seller">`
+    : (seller.firstName[0] + seller.lastName[0]).toUpperCase();
+
+  const buyBtn = car.available && currentUser && !isMine
+    ? `<button class="btn btn-primary" onclick="buyNow('${car._id}',${car.price})">Buy Now — ${fmtPrice(car.price)}</button>`
+    : !currentUser && car.available
+    ? `<a href="#/auth/login" class="btn btn-blue">Sign in to Buy</a>`
+    : !car.available ? `<span style="color:var(--red);font-size:13px">This car has been sold.</span>` : '';
+
+  const ownerBtns = isMine ? `
+    <button class="btn btn-secondary" onclick="toggleEditForm('${car._id}')">Edit Listing</button>
+    <button class="btn btn-danger" onclick="deleteCar('${car._id}')">Delete</button>
+  ` : '';
+
+  render(`
+    ${breadcrumb({ label: 'Cars', href: '#/cars' }, { label: `${car.manufacturer} ${car.model}` })}
+    <div class="detail-grid">
+      <div>
+        <div class="detail-imgs">
+          <div class="detail-img">${ext}</div>
+          <div class="detail-img">${int_}</div>
+        </div>
+      </div>
+      <div>
+        <div class="detail-title">${car.manufacturer} ${car.model}</div>
+        <div class="detail-price">${fmtPrice(car.price)}</div>
+        <div class="specs-grid">
+          <div class="spec-box"><div class="spec-lbl">Year</div><div class="spec-val">${car.year}</div></div>
+          <div class="spec-box"><div class="spec-lbl">Color</div><div class="spec-val">${car.color}</div></div>
+          <div class="spec-box"><div class="spec-lbl">Mileage</div><div class="spec-val">${Number(car.milage).toLocaleString()} km</div></div>
+          <div class="spec-box"><div class="spec-lbl">Engine</div><div class="spec-val">${car.engine}</div></div>
+          <div class="spec-box"><div class="spec-lbl">Horsepower</div><div class="spec-val">${car.hp} HP</div></div>
+          <div class="spec-box"><div class="spec-lbl">Status</div><div class="spec-val ${car.available ? 'status-avail' : 'status-sold'}">${car.available ? 'Available' : 'Sold'}</div></div>
+        </div>
+        <div class="seller-strip">
+          <div class="seller-av">${selAv}</div>
+          <div><div style="font-size:14px;font-weight:500">${seller.firstName} ${seller.lastName}</div><div style="font-size:11px;color:var(--muted)">Seller</div></div>
+        </div>
+        <div class="action-row">
+          ${buyBtn}
+          ${ownerBtns}
+        </div>
+        <div id="editFormContainer"></div>
+      </div>
+    </div>
+  `);
+
+  // store car data on window for edit form
+  window._editCar = car;
+}
+
+function toggleEditForm(id) {
+  const el = document.getElementById('editFormContainer');
+  if (el.innerHTML) { el.innerHTML = ''; return; }
+  const c = window._editCar;
+  el.innerHTML = `
+    <div class="inline-form" style="margin-top:16px">
+      <div style="font-family:var(--font-d);font-size:15px;font-weight:700;text-transform:uppercase;margin-bottom:14px;color:var(--text)">Edit Listing</div>
+      <div class="form-row">
+        <div class="form-group"><label class="lbl">Manufacturer</label><input class="inp" id="e_make" value="${c.manufacturer}"/></div>
+        <div class="form-group"><label class="lbl">Model</label><input class="inp" id="e_model" value="${c.model}"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="lbl">Year</label><input class="inp" type="number" id="e_year" value="${c.year}"/></div>
+        <div class="form-group"><label class="lbl">Price (EGP)</label><input class="inp" type="number" id="e_price" value="${c.price}"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="lbl">Color</label><input class="inp" id="e_color" value="${c.color}"/></div>
+        <div class="form-group"><label class="lbl">Mileage (km)</label><input class="inp" type="number" id="e_milage" value="${c.milage}"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="lbl">Horsepower</label><input class="inp" type="number" id="e_hp" value="${c.hp}"/></div>
+        <div class="form-group"><label class="lbl">Engine</label><input class="inp" id="e_engine" value="${c.engine}"/></div>
+      </div>
+      <div class="form-group">
+        <label class="lbl">Available</label>
+        <select class="inp" id="e_avail">
+          <option value="true" ${c.available ? 'selected' : ''}>Available</option>
+          <option value="false" ${!c.available ? 'selected' : ''}>Sold</option>
+        </select>
+      </div>
+      <div id="editMsg"></div>
+      <div class="action-row" style="margin-top:12px">
+        <button class="btn btn-primary" onclick="submitEdit('${id}')">Save Changes</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('editFormContainer').innerHTML=''">Cancel</button>
+      </div>
+    </div>`;
+}
+
+async function submitEdit(id) {
+  const body = {
+    manufacturer: document.getElementById('e_make').value.trim(),
+    model: document.getElementById('e_model').value.trim(),
+    year: +document.getElementById('e_year').value,
+    price: +document.getElementById('e_price').value,
+    color: document.getElementById('e_color').value.trim(),
+    milage: +document.getElementById('e_milage').value,
+    hp: +document.getElementById('e_hp').value,
+    engine: document.getElementById('e_engine').value.trim(),
+    available: document.getElementById('e_avail').value === 'true',
+  };
+  const { ok, data } = await apiJSON(`/api/cars/${id}`, { method: 'PATCH', json: body });
+  const msgEl = document.getElementById('editMsg');
+  if (ok) {
+    msgEl.innerHTML = `<div class="form-msg form-ok">Changes saved.</div>`;
+    toast('Listing updated.');
+    setTimeout(() => pageCarDetail({ id }), 1000);
+  } else {
+    msgEl.innerHTML = `<div class="form-msg form-err">${data?.message || 'Update failed'}</div>`;
+  }
+}
+
+async function deleteCar(id) {
+  if (!confirm('Delete this listing? This cannot be undone.')) return;
+  const { ok, data } = await apiJSON(`/api/cars/${id}`, { method: 'DELETE' });
+  if (ok) { toast('Listing deleted.'); location.hash = '/cars'; }
+  else toast(data?.message || 'Delete failed', 'err');
+}
+
+async function buyNow(carId, price) {
+  if (!confirm(`Confirm purchase for ${fmtPrice(price)}?`)) return;
+  const { ok, data } = await apiJSON('/api/orders/', { method: 'POST', json: { carid: carId, price } });
+  if (ok) { toast('Order placed! 🎉'); location.hash = `/orders/${data.id}`; }
+  else toast(data?.message || 'Order failed', 'err');
+}
+
+/* ═══════════════════════════════════════
+   PAGE: MY CARS
+═══════════════════════════════════════ */
+async function pageMyCars() {
+  setLoading();
+  const { ok, data } = await apiJSON('/api/cars/my-cars');
+  if (!ok) { render(`<div class="empty"><p>Could not load your listings.</p></div>`); return; }
+  render(`
+    <div class="page-top">
+      <div class="page-title">My <span>Listings</span></div>
+      <a href="#/cars/new" class="btn btn-primary">+ List a Car</a>
+    </div>
+    ${data.length === 0
+      ? `<div class="empty"><div class="empty-icon">🚗</div><p>No listings yet.<br><a href="#/cars/new">List your first car</a></p></div>`
+      : `<div class="car-grid">${data.map(c => carCard(c, true)).join('')}</div>`}
+  `);
+}
+
+/* ═══════════════════════════════════════
+   PAGE: NEW CAR
+═══════════════════════════════════════ */
+function pageNewCar() {
+  render(`
+    ${breadcrumb({ label: 'Cars', href: '#/cars' }, { label: 'List a Car' })}
+    <div style="max-width:600px">
+      <div class="page-title" style="margin-bottom:20px">List Your <span>Car</span></div>
+      <div class="section-card">
+        <div class="card-title">Car Details</div>
+        <div class="form-row">
+          <div class="form-group"><label class="lbl">Manufacturer</label><input class="inp" id="n_make" placeholder="Toyota"/></div>
+          <div class="form-group"><label class="lbl">Model</label><input class="inp" id="n_model" placeholder="Camry"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="lbl">Year</label><input class="inp" type="number" id="n_year" placeholder="2022"/></div>
+          <div class="form-group"><label class="lbl">Price (EGP)</label><input class="inp" type="number" id="n_price" placeholder="450000"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="lbl">Color</label><input class="inp" id="n_color" placeholder="White"/></div>
+          <div class="form-group"><label class="lbl">Mileage (km)</label><input class="inp" type="number" id="n_milage" placeholder="32000"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="lbl">Horsepower</label><input class="inp" type="number" id="n_hp" placeholder="180"/></div>
+          <div class="form-group"><label class="lbl">Engine</label><input class="inp" id="n_engine" placeholder="2.5L V6"/></div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="card-title">Photos</div>
+        <div class="form-group">
+          <label class="lbl">Exterior Photo</label>
+          <label class="file-lbl" for="n_ext">📷 <span id="n_ext_name">Choose exterior photo</span></label>
+          <input type="file" id="n_ext" accept="image/*" onchange="setFileName('n_ext','n_ext_name')"/>
+        </div>
+        <div class="form-group">
+          <label class="lbl">Interior Photo</label>
+          <label class="file-lbl" for="n_int">📷 <span id="n_int_name">Choose interior photo</span></label>
+          <input type="file" id="n_int" accept="image/*" onchange="setFileName('n_int','n_int_name')"/>
+        </div>
+      </div>
+      <div id="newCarMsg"></div>
+      <button class="btn btn-primary btn-full" style="padding:12px" onclick="submitNewCar()">List Car for Sale</button>
+    </div>
+  `);
+}
+
+function setFileName(inputId, spanId) {
+  const f = document.getElementById(inputId).files[0];
+  document.getElementById(spanId).textContent = f ? f.name : 'Choose photo';
+}
+
+async function submitNewCar() {
+  const ids = ['n_make','n_model','n_year','n_price','n_color','n_milage','n_hp','n_engine'];
+  const msgEl = document.getElementById('newCarMsg');
+  for (const id of ids) {
+    if (!document.getElementById(id).value.trim()) {
+      msgEl.innerHTML = `<div class="form-msg form-err">All fields are required.</div>`; return;
+    }
+  }
+  const ext = document.getElementById('n_ext').files[0];
+  const int_ = document.getElementById('n_int').files[0];
+  if (!ext || !int_) { msgEl.innerHTML = `<div class="form-msg form-err">Both photos are required.</div>`; return; }
+
+  const fd = new FormData();
+  fd.append('manufacturer', document.getElementById('n_make').value.trim());
+  fd.append('model', document.getElementById('n_model').value.trim());
+  fd.append('year', document.getElementById('n_year').value);
+  fd.append('price', document.getElementById('n_price').value);
+  fd.append('color', document.getElementById('n_color').value.trim());
+  fd.append('milage', document.getElementById('n_milage').value);
+  fd.append('hp', document.getElementById('n_hp').value);
+  fd.append('engine', document.getElementById('n_engine').value.trim());
+  fd.append('images', ext);
+  fd.append('images', int_);
+
+  msgEl.innerHTML = `<div class="form-msg" style="color:var(--muted)">Uploading…</div>`;
+  const { ok, data } = await apiJSON('/api/cars/', { method: 'POST', body: fd });
+  if (ok) { toast('Car listed! 🚗'); location.hash = `/cars/${data.id}`; }
+  else msgEl.innerHTML = `<div class="form-msg form-err">${data?.message || 'Failed to list car.'}</div>`;
+}
+
+/* ═══════════════════════════════════════
+   PAGE: ORDERS
+═══════════════════════════════════════ */
+async function pageOrders() {
+  setLoading();
+  const { ok, data } = await apiJSON('/api/orders/list');
+  if (!ok) { render(`<div class="empty"><p>Could not load orders.</p></div>`); return; }
+  render(`
+    <div class="page-top">
+      <div class="page-title">My <span>Orders</span></div>
+      <div class="page-meta">${data.length} order${data.length !== 1 ? 's' : ''}</div>
+    </div>
+    ${data.length === 0
+      ? `<div class="empty"><div class="empty-icon">📋</div><p>No orders yet.<br><a href="#/cars">Browse cars</a></p></div>`
+      : data.map(orderRow).join('')}
+  `);
+}
+
+function orderRow(o) {
+  const car = o.car || {};
+  const img = car.images?.exterior
+    ? `<img src="${BASE}${car.images.exterior}" alt="car"/>`
+    : '🚗';
+  return `
+    <a class="order-row" href="#/orders/${o.id}">
+      <div class="order-thumb">${img}</div>
+      <div class="order-info">
+        <div class="order-name">${car.manufacturer || ''} ${car.model || ''} ${car.year || ''}</div>
+        <div class="order-date">${fmtDate(o.createdAt)}</div>
+      </div>
+      <div class="order-price">${fmtPrice(o.price)}</div>
+    </a>`;
+}
+
+/* ═══════════════════════════════════════
+   PAGE: ORDER DETAIL
+═══════════════════════════════════════ */
+async function pageOrderDetail({ id }) {
+  setLoading();
+  // We fetch the order list and find the matching one (API has no single-order GET)
+  const { ok, data } = await apiJSON('/api/orders/list');
+  if (!ok) { render(`<div class="empty"><p>Could not load orders.</p></div>`); return; }
+  const o = data.find(x => x.id === id);
+  if (!o) { render(`<div class="empty"><div class="empty-icon">📋</div><p>Order not found. <a href="#/orders">Back to orders</a></p></div>`); return; }
+  const car = o.car || {};
+  const extImg = car.images?.exterior ? `<img src="${BASE}${car.images.exterior}" alt="exterior">` : '🚗';
+
+  render(`
+    ${breadcrumb({ label: 'Orders', href: '#/orders' }, { label: `Order #${id.slice(-6).toUpperCase()}` })}
+    <div style="max-width:560px">
+      <div class="section-card">
+        <div class="card-title">Order Summary</div>
+        <div style="display:flex;gap:14px;align-items:center;margin-bottom:16px">
+          <div class="order-thumb" style="width:90px;height:66px;border-radius:8px">${extImg}</div>
+          <div>
+            <div style="font-family:var(--font-d);font-size:20px;font-weight:700;text-transform:uppercase">${car.manufacturer || ''} ${car.model || ''}</div>
+            <div style="font-size:13px;color:var(--muted)">${car.year || ''}</div>
+          </div>
+        </div>
+        <div class="specs-grid">
+          <div class="spec-box"><div class="spec-lbl">Order ID</div><div class="spec-val" style="font-size:12px;font-family:monospace">${id}</div></div>
+          <div class="spec-box"><div class="spec-lbl">Date</div><div class="spec-val">${fmtDate(o.createdAt)}</div></div>
+          <div class="spec-box"><div class="spec-lbl">Amount Paid</div><div class="spec-val" style="color:var(--orange)">${fmtPrice(o.price)}</div></div>
+          <div class="spec-box"><div class="spec-lbl">Car</div><div class="spec-val"><a href="#/cars/${car._id}" style="color:var(--blue);text-decoration:none">View Listing →</a></div></div>
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-danger" onclick="cancelOrder('${id}')">Cancel Order</button>
+        <a href="#/orders" class="btn btn-secondary">Back to Orders</a>
+      </div>
+    </div>
+  `);
+}
+
+async function cancelOrder(id) {
+  if (!confirm('Cancel this order? The car will be re-listed.')) return;
+  const { ok, data } = await apiJSON(`/api/orders/${id}`, { method: 'DELETE' });
+  if (ok) { toast('Order cancelled.'); location.hash = '/orders'; }
+  else toast(data?.message || 'Failed to cancel', 'err');
+}
+
+/* ═══════════════════════════════════════
+   PAGE: PROFILE
+═══════════════════════════════════════ */
+function pageProfile() {
+  if (!currentUser) { location.hash = '/auth/login'; return; }
+  const u = currentUser;
+  const avHTML = u.avatar
+    ? `<div class="profile-av-lg"><img src="${BASE}${u.avatar}" alt="av"/></div>`
+    : `<div class="profile-av-lg">${(u.firstName[0]+u.lastName[0]).toUpperCase()}</div>`;
+  render(`
+    <div class="page-title" style="margin-bottom:20px">Profile</div>
+    <div class="profile-layout">
+      <div>
+        <div class="profile-card">
+          ${avHTML}
+          <div class="profile-name">${u.firstName} ${u.lastName}</div>
+          <div class="profile-email">${u.email}</div>
+          <label class="file-lbl" for="avUp" style="justify-content:center;margin-bottom:12px">📷 Change photo</label>
+          <input type="file" id="avUp" accept="image/*" onchange="uploadAvatar(this)"/>
+          <button class="btn btn-danger btn-full" style="margin-top:4px" onclick="doLogout()">Sign Out</button>
+        </div>
+      </div>
+      <div class="profile-form-card">
+        <div class="card-title">Update Profile</div>
+        <div class="form-row">
+          <div class="form-group"><label class="lbl">First Name</label><input class="inp" id="pf_first" value="${u.firstName}"/></div>
+          <div class="form-group"><label class="lbl">Last Name</label><input class="inp" id="pf_last" value="${u.lastName}"/></div>
+        </div>
+        <div class="form-group"><label class="lbl">Email</label><input class="inp" type="email" id="pf_email" value="${u.email}"/></div>
+        <div id="pfMsg"></div>
+        <button class="btn btn-blue" style="margin-top:14px" onclick="saveProfile()">Save Changes</button>
+      </div>
+    </div>
+  `);
+}
+
+async function uploadAvatar(input) {
+  const file = input.files[0]; if (!file) return;
+  const fd = new FormData(); fd.append('avatar', file);
+  const { ok, data } = await apiJSON('/api/user/avatar', { method: 'PATCH', body: fd });
+  if (ok) { currentUser = data.user; renderNav(); pageProfile(); toast('Avatar updated!'); }
+  else toast(data?.message || 'Upload failed', 'err');
+}
+
+async function saveProfile() {
+  const body = {
+    firstName: document.getElementById('pf_first').value.trim(),
+    lastName: document.getElementById('pf_last').value.trim(),
+    email: document.getElementById('pf_email').value.trim(),
+  };
+  const { ok, data } = await apiJSON('/api/user/profile', { method: 'PATCH', json: body });
+  const msgEl = document.getElementById('pfMsg');
+  if (ok) {
+    currentUser = data.user; renderNav();
+    msgEl.innerHTML = `<div class="form-msg form-ok">Profile updated.</div>`;
+    toast('Profile updated!');
+  } else {
+    msgEl.innerHTML = `<div class="form-msg form-err">${data?.message || 'Update failed'}</div>`;
+  }
+}
+
+async function doLogout() {
+  await fetch(BASE + '/api/auth/logout', { method: 'POST', credentials: 'include' });
+  accessToken = null; currentUser = null; clearTimeout(refreshTimer);
+  renderNav(); toast('Signed out.');
+  location.hash = '/cars';
+}
+
+/* ═══════════════════════════════════════
+   PAGE: AUTH
+═══════════════════════════════════════ */
+function pageAuth(tab) {
+  render(`
+    <div class="auth-wrap">
+      <div class="auth-card">
+        <div class="auth-title" id="authTitle">${tab === 'login' ? 'Sign In' : 'Create Account'}</div>
+        <div class="auth-sub" id="authSub">${tab === 'login' ? 'Welcome back to GTed' : 'Join GTed today'}</div>
+        <div class="tab-row">
+          <button class="tab ${tab==='login'?'on':''}" onclick="switchAuthTab('login')">Sign In</button>
+          <button class="tab ${tab==='register'?'on':''}" onclick="switchAuthTab('register')">Register</button>
+        </div>
+        <div id="authForms">
+          ${tab === 'login' ? loginForm() : registerForm()}
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+function loginForm() {
+  return `
+    <div class="form-group"><label class="lbl">Email</label><input class="inp" type="email" id="l_email" placeholder="you@example.com"/></div>
+    <div class="form-group"><label class="lbl">Password</label><input class="inp" type="password" id="l_pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <div id="loginMsg"></div>
+    <button class="btn btn-primary btn-full" style="margin-top:14px;padding:11px" onclick="doLogin()">Sign In</button>
+  `;
+}
+
+function registerForm() {
+  return `
+    <div class="form-row">
+      <div class="form-group"><label class="lbl">First Name</label><input class="inp" id="r_first" placeholder="John"/></div>
+      <div class="form-group"><label class="lbl">Last Name</label><input class="inp" id="r_last" placeholder="Doe"/></div>
+    </div>
+    <div class="form-group"><label class="lbl">Email</label><input class="inp" type="email" id="r_email" placeholder="you@example.com"/></div>
+    <div class="form-group"><label class="lbl">Password</label><input class="inp" type="password" id="r_pass" placeholder="••••••••"/></div>
+    <div id="regMsg"></div>
+    <button class="btn btn-primary btn-full" style="margin-top:14px;padding:11px" onclick="doRegister()">Create Account</button>
+  `;
+}
+
+function switchAuthTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  event.currentTarget.classList.add('on');
+  document.getElementById('authTitle').textContent = tab === 'login' ? 'Sign In' : 'Create Account';
+  document.getElementById('authSub').textContent = tab === 'login' ? 'Welcome back to GTed' : 'Join GTed today';
+  document.getElementById('authForms').innerHTML = tab === 'login' ? loginForm() : registerForm();
+}
+
+async function doLogin() {
+  const email = document.getElementById('l_email').value.trim();
+  const pass = document.getElementById('l_pass').value;
+  const msgEl = document.getElementById('loginMsg');
+  if (!email || !pass) { msgEl.innerHTML = `<div class="form-msg form-err">Email and password required.</div>`; return; }
+  const res = await fetch(BASE + '/api/auth/login', {
+    method: 'POST', credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password: pass })
+  });
+  const data = await res.json();
+  if (!res.ok) { msgEl.innerHTML = `<div class="form-msg form-err">${data.message || 'Login failed'}</div>`; return; }
+  accessToken = data.accessToken;
+  scheduleRefresh();
+  await loadMe();
+  renderNav();
+  toast(`Welcome back, ${currentUser.firstName}!`);
+  location.hash = '/cars';
+}
+
+async function doRegister() {
+  const firstName = document.getElementById('r_first').value.trim();
+  const lastName = document.getElementById('r_last').value.trim();
+  const email = document.getElementById('r_email').value.trim();
+  const password = document.getElementById('r_pass').value;
+  const msgEl = document.getElementById('regMsg');
+  if (!firstName || !lastName || !email || !password) { msgEl.innerHTML = `<div class="form-msg form-err">All fields are required.</div>`; return; }
+  const res = await fetch(BASE + '/api/auth/register', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ firstName, lastName, email, password })
+  });
+  const data = await res.json();
+  if (!res.ok) { msgEl.innerHTML = `<div class="form-msg form-err">${data.message || 'Registration failed'}</div>`; return; }
+  msgEl.innerHTML = `<div class="form-msg form-ok">Account created! Signing you in…</div>`;
+  // auto login
+  const res2 = await fetch(BASE + '/api/auth/login', {
+    method: 'POST', credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+  if (res2.ok) {
+    const d2 = await res2.json();
+    accessToken = d2.accessToken; scheduleRefresh();
+    await loadMe(); renderNav();
+    toast(`Welcome to GTed, ${currentUser.firstName}!`);
+    location.hash = '/cars';
+  } else {
+    setTimeout(() => { location.hash = '/auth/login'; }, 1500);
+  }
+}
+
+/* ═══════════════════════════════════════
+   PAGE: SEARCH
+═══════════════════════════════════════ */
+async function pageSearch(_, { q }) {
+  if (!q) { location.hash = '/cars'; return; }
+  document.getElementById('searchInput').value = q;
+  setLoading();
+  const { ok, data } = await apiJSON(`/api/cars/search?q=${encodeURIComponent(q)}`);
+  if (!ok) { render(`<div class="empty"><p>Search failed.</p></div>`); return; }
+  render(`
+    <div class="page-top">
+      <div class="page-title">Results for <span>"${q}"</span></div>
+      <div class="page-meta">${data.length} found · <a href="#/cars" style="color:var(--orange);text-decoration:none">Clear</a></div>
+    </div>
+    ${data.length === 0
+      ? `<div class="empty"><div class="empty-icon">🔍</div><p>No cars matched "<b>${q}</b>"</p></div>`
+      : `<div class="car-grid">${data.map(c => carCard(c)).join('')}</div>`}
+  `);
+}
+
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) { location.hash = '/cars'; return; }
+  location.hash = `/search?q=${encodeURIComponent(q)}`;
+}
+
+/* ═══════════════════════════════════════
+   INIT
+═══════════════════════════════════════ */
+(async () => {
+  await tryRefresh();
+  if (accessToken) await loadMe();
+  renderNav();
+  route();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GTed — Drive What You Want</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0D1B2A;
+    --navy-card: #152438;
+    --navy-border: #1E3450;
+    --steel: #2B6CB0;
+    --steel-light: #3A80CC;
+    --amber: #E8A020;
+    --amber-dark: #C8881A;
+    --white: #F5F0E8;
+    --muted: #8899AA;
+    --red: #E05252;
+    --green: #3CB878;
+    --font-display: 'Barlow Condensed', sans-serif;
+    --font-body: 'Inter', sans-serif;
+  }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,27,42,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--navy-border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 60px;
+  }
+  .logo {
+    font-family: var(--font-display);
+    font-size: 28px; font-weight: 800; letter-spacing: 0.08em;
+    color: var(--white);
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer;
+  }
+  .logo span { color: var(--amber); }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .nav-btn {
+    font-family: var(--font-body); font-size: 13px; font-weight: 500;
+    padding: 7px 18px; border-radius: 6px; border: none; cursor: pointer;
+    transition: all 0.18s;
+  }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--navy-border); }
+  .btn-ghost:hover { color: var(--white); border-color: var(--steel); }
+  .btn-primary { background: var(--amber); color: var(--navy); }
+  .btn-primary:hover { background: var(--amber-dark); }
+  .btn-steel { background: var(--steel); color: var(--white); }
+  .btn-steel:hover { background: var(--steel-light); }
+  .btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red); }
+  .btn-danger:hover { background: var(--red); color: var(--white); }
+  .avatar-circle {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--steel); color: var(--white);
+    font-weight: 600; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 2px solid var(--navy-border);
+    overflow: hidden;
+  }
+  .avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* ── HERO ── */
+  #hero {
+    padding: 64px 32px 48px;
+    text-align: center;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-display); font-size: 13px; font-weight: 600;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber);
+    margin-bottom: 16px;
+  }
+  .hero-title {
+    font-family: var(--font-display); font-size: clamp(52px, 8vw, 96px);
+    font-weight: 800; line-height: 0.92; letter-spacing: -0.01em;
+    text-transform: uppercase; color: var(--white);
+    margin-bottom: 24px;
+  }
+  .hero-title em { color: var(--amber); font-style: normal; }
+  .hero-sub { font-size: 16px; color: var(--muted); max-width: 480px; margin: 0 auto 36px; line-height: 1.6; }
+  .search-bar {
+    display: flex; max-width: 520px; margin: 0 auto;
+    background: var(--navy-card); border: 1px solid var(--navy-border);
+    border-radius: 10px; overflow: hidden;
+  }
+  .search-bar input {
+    flex: 1; background: none; border: none; outline: none;
+    color: var(--white); font-family: var(--font-body); font-size: 14px;
+    padding: 13px 18px;
+  }
+  .search-bar input::placeholder { color: var(--muted); }
+  .search-bar button {
+    background: var(--amber); border: none; color: var(--navy);
+    font-family: var(--font-display); font-size: 15px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 0 24px; cursor: pointer; transition: background 0.15s;
+  }
+  .search-bar button:hover { background: var(--amber-dark); }
+
+  /* ── SECTIONS ── */
+  .section { padding: 0 32px 60px; }
+  .section-header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 24px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--navy-border);
+  }
+  .section-title {
+    font-family: var(--font-display); font-size: 28px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .section-title span { color: var(--amber); }
+  .section-count { font-size: 13px; color: var(--muted); }
+
+  /* ── CAR GRID ── */
+  .car-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .car-card {
+    background: var(--navy-card);
+    border: 1px solid var(--navy-border);
+    border-radius: 12px; overflow: hidden;
+    cursor: pointer; transition: transform 0.18s, border-color 0.18s;
+    position: relative;
+  }
+  .car-card:hover { transform: translateY(-4px); border-color: var(--steel); }
+  .car-img {
+    width: 100%; height: 168px; object-fit: cover;
+    background: var(--navy-border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted); font-size: 40px;
+  }
+  .car-img img { width: 100%; height: 100%; object-fit: cover; }
+  .car-body { padding: 14px 16px 16px; }
+  .car-make {
+    font-family: var(--font-display); font-size: 20px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .car-meta { font-size: 12px; color: var(--muted); margin: 3px 0 12px; }
+  .car-price-tag {
+    display: inline-block;
+    background: var(--amber); color: var(--navy);
+    font-family: var(--font-display); font-size: 19px; font-weight: 800;
+    letter-spacing: 0.04em; padding: 4px 12px; border-radius: 5px;
+  }
+  .car-unavail-badge {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(224,82,82,0.9); color: #fff;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 3px 9px; border-radius: 4px;
+  }
+  .car-my-badge {
+    position: absolute; top: 10px; left: 10px;
+    background: rgba(43,108,176,0.9); color: #fff;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 3px 9px; border-radius: 4px;
+  }
+
+  /* ── EMPTY / LOADING ── */
+  .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+  .empty .icon { font-size: 48px; margin-bottom: 12px; }
+  .empty p { font-size: 15px; }
+  .spinner {
+    width: 36px; height: 36px; border: 3px solid var(--navy-border);
+    border-top-color: var(--amber); border-radius: 50%;
+    animation: spin 0.7s linear infinite; margin: 60px auto;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── MODAL OVERLAY ── */
+  .overlay {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(8,16,26,0.8); backdrop-filter: blur(6px);
+    align-items: center; justify-content: center;
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: var(--navy-card); border: 1px solid var(--navy-border);
+    border-radius: 16px; width: 100%; max-width: 460px;
+    max-height: 92vh; overflow-y: auto;
+    padding: 32px; position: relative;
+    animation: slideUp 0.22s ease;
+  }
+  .modal-wide { max-width: 600px; }
+  @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    background: none; border: none; color: var(--muted); font-size: 22px;
+    cursor: pointer; line-height: 1;
+  }
+  .modal-close:hover { color: var(--white); }
+  .modal-title {
+    font-family: var(--font-display); font-size: 28px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px;
+  }
+  .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+  .tab-row { display: flex; gap: 4px; margin-bottom: 24px; }
+  .tab-btn {
+    flex: 1; padding: 9px; border-radius: 7px; border: none;
+    font-family: var(--font-body); font-size: 13px; font-weight: 500;
+    cursor: pointer; background: transparent; color: var(--muted);
+    border: 1px solid transparent; transition: all 0.15s;
+  }
+  .tab-btn.active { background: var(--steel); color: var(--white); }
+  .tab-btn:not(.active):hover { border-color: var(--navy-border); color: var(--white); }
+
+  /* ── FORMS ── */
+  .form-group { margin-bottom: 16px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.05em; text-transform: uppercase; }
+  input[type=text], input[type=email], input[type=password], input[type=number], select {
+    width: 100%; padding: 10px 13px;
+    background: var(--navy); border: 1px solid var(--navy-border);
+    border-radius: 7px; color: var(--white);
+    font-family: var(--font-body); font-size: 14px;
+    outline: none; transition: border-color 0.15s;
+  }
+  input:focus, select:focus { border-color: var(--steel); }
+  select option { background: var(--navy-card); }
+  .form-file-label {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 13px; background: var(--navy); border: 1px dashed var(--navy-border);
+    border-radius: 7px; cursor: pointer; font-size: 13px; color: var(--muted);
+    transition: border-color 0.15s;
+  }
+  .form-file-label:hover { border-color: var(--steel); color: var(--white); }
+  input[type=file] { display: none; }
+  .form-btn {
+    width: 100%; padding: 12px;
+    border-radius: 8px; border: none; cursor: pointer;
+    font-family: var(--font-display); font-size: 17px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    transition: background 0.15s;
+  }
+  .form-btn.amber { background: var(--amber); color: var(--navy); margin-top: 6px; }
+  .form-btn.amber:hover { background: var(--amber-dark); }
+  .form-btn.steel { background: var(--steel); color: var(--white); margin-top: 6px; }
+  .form-btn.steel:hover { background: var(--steel-light); }
+  .form-error { font-size: 13px; color: var(--red); margin-top: 12px; text-align: center; }
+  .form-success { font-size: 13px; color: var(--green); margin-top: 12px; text-align: center; }
+
+  /* ── CAR DETAIL MODAL ── */
+  .detail-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+  .detail-img {
+    border-radius: 8px; overflow: hidden; background: var(--navy-border);
+    height: 160px; display: flex; align-items: center; justify-content: center; font-size: 36px;
+  }
+  .detail-img img { width: 100%; height: 100%; object-fit: cover; }
+  .detail-title {
+    font-family: var(--font-display); font-size: 34px; font-weight: 800;
+    text-transform: uppercase; margin-bottom: 4px;
+  }
+  .detail-price {
+    font-family: var(--font-display); font-size: 28px; font-weight: 800;
+    color: var(--amber); margin-bottom: 16px;
+  }
+  .detail-specs {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-bottom: 20px;
+  }
+  .spec-item { background: var(--navy); border-radius: 8px; padding: 10px 14px; }
+  .spec-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
+  .spec-val { font-size: 15px; font-weight: 600; }
+  .seller-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; background: var(--navy); border-radius: 8px; margin-bottom: 18px;
+  }
+  .seller-name { font-size: 14px; font-weight: 500; }
+  .seller-tag { font-size: 11px; color: var(--muted); }
+
+  /* ── PROFILE MODAL ── */
+  .profile-header {
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    margin-bottom: 24px;
+  }
+  .profile-avatar-lg {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: var(--steel); color: var(--white);
+    font-size: 28px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; border: 3px solid var(--navy-border);
+  }
+  .profile-avatar-lg img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+    background: var(--navy-card); border: 1px solid var(--navy-border);
+    border-radius: 10px; padding: 13px 20px;
+    font-size: 14px; color: var(--white);
+    opacity: 0; transform: translateY(10px);
+    transition: all 0.22s; pointer-events: none;
+    max-width: 320px;
+  }
+  #toast.show { opacity: 1; transform: translateY(0); }
+  #toast.ok { border-left: 3px solid var(--green); }
+  #toast.err { border-left: 3px solid var(--red); }
+
+  /* ── ORDER CARDS ── */
+  .order-card {
+    background: var(--navy); border: 1px solid var(--navy-border);
+    border-radius: 10px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 14px; margin-bottom: 10px;
+  }
+  .order-car-img {
+    width: 72px; height: 52px; border-radius: 6px;
+    object-fit: cover; background: var(--navy-border);
+    display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
+  }
+  .order-car-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+  .order-info { flex: 1; min-width: 0; }
+  .order-name { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .order-date { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .order-price { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--amber); }
+
+  @media (max-width: 600px) {
+    nav { padding: 0 16px; }
+    #hero { padding: 40px 16px 36px; }
+    .section { padding: 0 16px 40px; }
+    .form-row { grid-template-columns: 1fr; }
+    .detail-imgs { grid-template-columns: 1fr; }
+    .detail-specs { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="showHome()">GT<span>ed</span></div>
+  <div class="nav-right" id="navRight">
+    <button class="nav-btn btn-ghost" onclick="openAuth('login')">Sign In</button>
+    <button class="nav-btn btn-primary" onclick="openAuth('register')">List a Car</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-eyebrow">Car Marketplace</div>
+  <h1 class="hero-title">Drive<br><em>What You</em><br>Want</h1>
+  <p class="hero-sub">Browse thousands of cars from real sellers. Find your next ride or list yours today.</p>
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search by make, model, or color…" onkeydown="if(event.key==='Enter')doSearch()"/>
+    <button onclick="doSearch()">Search</button>
+  </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<main id="mainContent" class="section">
+  <div id="carsSection">
+    <div class="section-header">
+      <div class="section-title">Available <span>Cars</span></div>
+      <div class="section-count" id="carsCount"></div>
+    </div>
+    <div id="carsList"></div>
+  </div>
+</main>
+
+<!-- AUTH MODAL -->
+<div class="overlay" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('authModal')">✕</button>
+    <div class="modal-title" id="authTitle">Welcome Back</div>
+    <div class="modal-sub" id="authSub">Sign in to your GTed account</div>
+    <div class="tab-row">
+      <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">Sign In</button>
+      <button class="tab-btn" id="tabRegister" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="formLogin">
+      <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@example.com"/></div>
+      <div class="form-group"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••"/></div>
+      <div id="loginError" class="form-error" style="display:none"></div>
+      <button class="form-btn amber" onclick="doLogin()">Sign In</button>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="formRegister" style="display:none">
+      <div class="form-row">
+        <div class="form-group"><label>First Name</label><input type="text" id="regFirst" placeholder="John"/></div>
+        <div class="form-group"><label>Last Name</label><input type="text" id="regLast" placeholder="Doe"/></div>
+      </div>
+      <div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="you@example.com"/></div>
+      <div class="form-group"><label>Password</label><input type="password" id="regPassword" placeholder="••••••••"/></div>
+      <div id="regError" class="form-error" style="display:none"></div>
+      <div id="regSuccess" class="form-success" style="display:none"></div>
+      <button class="form-btn amber" onclick="doRegister()">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- CAR DETAIL MODAL -->
+<div class="overlay" id="carModal">
+  <div class="modal modal-wide">
+    <button class="modal-close" onclick="closeModal('carModal')">✕</button>
+    <div id="carModalContent"></div>
+  </div>
+</div>
+
+<!-- LIST CAR MODAL -->
+<div class="overlay" id="listModal">
+  <div class="modal modal-wide">
+    <button class="modal-close" onclick="closeModal('listModal')">✕</button>
+    <div class="modal-title">List Your <span style="color:var(--amber)">Car</span></div>
+    <div class="modal-sub">Fill in the details to list your car for sale</div>
+    <div class="form-row">
+      <div class="form-group"><label>Manufacturer</label><input type="text" id="lcMake" placeholder="Toyota"/></div>
+      <div class="form-group"><label>Model</label><input type="text" id="lcModel" placeholder="Camry"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Year</label><input type="number" id="lcYear" placeholder="2022"/></div>
+      <div class="form-group"><label>Price (EGP)</label><input type="number" id="lcPrice" placeholder="450000"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Color</label><input type="text" id="lcColor" placeholder="White"/></div>
+      <div class="form-group"><label>Mileage (km)</label><input type="number" id="lcMilage" placeholder="32000"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Horsepower</label><input type="number" id="lcHp" placeholder="180"/></div>
+      <div class="form-group"><label>Engine</label><input type="text" id="lcEngine" placeholder="2.5L V6"/></div>
+    </div>
+    <div class="form-group">
+      <label>Exterior Image</label>
+      <label class="form-file-label" for="lcExt">📷 <span id="lcExtName">Choose exterior photo</span></label>
+      <input type="file" id="lcExt" accept="image/*" onchange="updateFileName('lcExt','lcExtName')"/>
+    </div>
+    <div class="form-group">
+      <label>Interior Image</label>
+      <label class="form-file-label" for="lcInt">📷 <span id="lcIntName">Choose interior photo</span></label>
+      <input type="file" id="lcInt" accept="image/*" onchange="updateFileName('lcInt','lcIntName')"/>
+    </div>
+    <div id="listError" class="form-error" style="display:none"></div>
+    <button class="form-btn amber" onclick="doListCar()">List Car for Sale</button>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="overlay" id="profileModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
+    <div class="modal-title">My <span style="color:var(--amber)">Profile</span></div>
+    <div id="profileContent"></div>
+  </div>
+</div>
+
+<!-- MY CARS MODAL -->
+<div class="overlay" id="myCarsModal">
+  <div class="modal modal-wide">
+    <button class="modal-close" onclick="closeModal('myCarsModal')">✕</button>
+    <div class="modal-title">My <span style="color:var(--amber)">Listings</span></div>
+    <div id="myCarsContent"></div>
+  </div>
+</div>
+
+<!-- ORDERS MODAL -->
+<div class="overlay" id="ordersModal">
+  <div class="modal modal-wide">
+    <button class="modal-close" onclick="closeModal('ordersModal')">✕</button>
+    <div class="modal-title">My <span style="color:var(--amber)">Orders</span></div>
+    <div id="ordersContent"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const BASE = 'http://localhost:3000';
+let accessToken = null;
+let currentUser = null;
+let refreshTimer = null;
+
+/* ── TOKEN HELPERS ── */
+async function apiFetch(path, opts = {}) {
+  const headers = { ...(opts.headers || {}) };
+  if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;
+  if (opts.json) {
+    headers['Content-Type'] = 'application/json';
+    opts.body = JSON.stringify(opts.json);
+  }
+  const res = await fetch(BASE + path, { ...opts, headers, credentials: 'include' });
+  return res;
+}
+
+async function refreshAccess() {
+  try {
+    const res = await fetch(BASE + '/api/auth/refresh', { method: 'POST', credentials: 'include' });
+    if (res.ok) {
+      const d = await res.json();
+      accessToken = d.accessToken;
+      scheduleRefresh();
+      return true;
+    } else {
+      accessToken = null; currentUser = null;
+      renderNav();
+    }
+  } catch {}
+  return false;
+}
+
+function scheduleRefresh() {
+  if (refreshTimer) clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(refreshAccess, 35 * 1000); // refresh before 40s expiry
+}
+
+async function fetchMe() {
+  const res = await apiFetch('/api/user/getMe');
+  if (res.ok) {
+    const d = await res.json();
+    currentUser = d.user;
+    renderNav();
+  }
+}
+
+/* ── NAV ── */
+function renderNav() {
+  const nr = document.getElementById('navRight');
+  if (currentUser) {
+    const initials = (currentUser.firstName[0] + currentUser.lastName[0]).toUpperCase();
+    const avatarSrc = currentUser.avatar ? BASE + currentUser.avatar : null;
+    nr.innerHTML = `
+      <button class="nav-btn btn-ghost" onclick="openMyCars()">My Cars</button>
+      <button class="nav-btn btn-ghost" onclick="openOrders()">Orders</button>
+      <button class="nav-btn btn-primary" onclick="openListModal()">+ List Car</button>
+      <div class="avatar-circle" onclick="openProfile()" title="${currentUser.firstName} ${currentUser.lastName}">
+        ${avatarSrc ? `<img src="${BASE}${currentUser.avatar}" alt="avatar"/>` : initials}
+      </div>
+    `;
+  } else {
+    nr.innerHTML = `
+      <button class="nav-btn btn-ghost" onclick="openAuth('login')">Sign In</button>
+      <button class="nav-btn btn-primary" onclick="openAuth('register')">List a Car</button>
+    `;
+  }
+}
+
+function showHome() { loadCars(); document.getElementById('searchInput').value = ''; }
+
+/* ── TOAST ── */
+let toastTimer;
+function toast(msg, type = 'ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `show ${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = ''; }, 3200);
+}
+
+/* ── MODAL ── */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+});
+
+/* ── AUTH ── */
+function openAuth(tab = 'login') {
+  switchTab(tab);
+  openModal('authModal');
+}
+
+function switchTab(tab) {
+  document.getElementById('formLogin').style.display = tab === 'login' ? '' : 'none';
+  document.getElementById('formRegister').style.display = tab === 'register' ? '' : 'none';
+  document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+  document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
+  document.getElementById('authTitle').textContent = tab === 'login' ? 'Welcome Back' : 'Create Account';
+  document.getElementById('authSub').textContent = tab === 'login' ? 'Sign in to your GTed account' : 'Join GTed and start listing cars';
+  document.getElementById('loginError').style.display = 'none';
+  document.getElementById('regError').style.display = 'none';
+  document.getElementById('regSuccess').style.display = 'none';
+}
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+  if (!email || !password) { errEl.textContent = 'Email and password are required.'; errEl.style.display = ''; return; }
+  try {
+    const res = await fetch(BASE + '/api/auth/login', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const d = await res.json();
+    if (!res.ok) { errEl.textContent = d.message || 'Login failed'; errEl.style.display = ''; return; }
+    accessToken = d.accessToken;
+    scheduleRefresh();
+    await fetchMe();
+    closeModal('authModal');
+    toast(`Welcome back, ${currentUser.firstName}!`);
+    loadCars();
+  } catch { errEl.textContent = 'Network error'; errEl.style.display = ''; }
+}
+
+async function doRegister() {
+  const firstName = document.getElementById('regFirst').value.trim();
+  const lastName = document.getElementById('regLast').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const errEl = document.getElementById('regError');
+  const okEl = document.getElementById('regSuccess');
+  errEl.style.display = 'none'; okEl.style.display = 'none';
+  if (!firstName || !lastName || !email || !password) { errEl.textContent = 'All fields are required.'; errEl.style.display = ''; return; }
+  try {
+    const res = await fetch(BASE + '/api/auth/register', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ firstName, lastName, email, password })
+    });
+    const d = await res.json();
+    if (!res.ok) { errEl.textContent = d.message || 'Registration failed'; errEl.style.display = ''; return; }
+    okEl.textContent = 'Account created! You can now sign in.'; okEl.style.display = '';
+    setTimeout(() => switchTab('login'), 1800);
+  } catch { errEl.textContent = 'Network error'; errEl.style.display = ''; }
+}
+
+async function doLogout() {
+  await fetch(BASE + '/api/auth/logout', { method: 'POST', credentials: 'include' });
+  accessToken = null; currentUser = null;
+  if (refreshTimer) clearTimeout(refreshTimer);
+  renderNav();
+  closeModal('profileModal');
+  toast('Signed out successfully.', 'ok');
+  loadCars();
+}
+
+/* ── CARS ── */
+function formatPrice(p) {
+  return 'EGP ' + Number(p).toLocaleString('en-EG');
+}
+
+function carCardHTML(car, showMyBadge = false) {
+  const imgHTML = car.image
+    ? `<img src="${BASE}${car.image}" alt="${car.manufacturer} ${car.model}" loading="lazy" onerror="this.parentElement.textContent='🚗'"/>`
+    : '🚗';
+  return `
+    <div class="car-card" onclick="openCar('${car.id}')">
+      <div class="car-img">${imgHTML}</div>
+      ${!car.available && car.available !== undefined ? '<div class="car-unavail-badge">Sold</div>' : ''}
+      ${showMyBadge ? '<div class="car-my-badge">Mine</div>' : ''}
+      <div class="car-body">
+        <div class="car-make">${car.manufacturer} ${car.model}</div>
+        <div class="car-meta">${car.year} · ${car.color || ''}</div>
+        <div class="car-price-tag">${formatPrice(car.price)}</div>
+      </div>
+    </div>`;
+}
+
+async function loadCars() {
+  const el = document.getElementById('carsList');
+  const hdr = document.getElementById('carsCount');
+  el.innerHTML = '<div class="spinner"></div>';
+  hdr.textContent = '';
+  try {
+    const res = await fetch(BASE + '/api/cars/list');
+    if (!res.ok) throw new Error();
+    const cars = await res.json();
+    hdr.textContent = `${cars.length} car${cars.length !== 1 ? 's' : ''} available`;
+    if (!cars.length) { el.innerHTML = '<div class="empty"><div class="icon">🚗</div><p>No cars listed yet. Be the first!</p></div>'; return; }
+    el.innerHTML = `<div class="car-grid">${cars.map(c => carCardHTML(c)).join('')}</div>`;
+    document.getElementById('section-title-txt') && (document.getElementById('section-title-txt').textContent = 'Available Cars');
+  } catch {
+    el.innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>Could not load cars. Is the server running?</p></div>';
+  }
+}
+
+async function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) { loadCars(); return; }
+  const el = document.getElementById('carsList');
+  const hdr = document.getElementById('carsCount');
+  el.innerHTML = '<div class="spinner"></div>';
+  hdr.textContent = '';
+  try {
+    const res = await fetch(BASE + `/api/cars/search?q=${encodeURIComponent(q)}`);
+    if (!res.ok) throw new Error();
+    const cars = await res.json();
+    hdr.textContent = `${cars.length} result${cars.length !== 1 ? 's' : ''} for "${q}"`;
+    if (!cars.length) { el.innerHTML = `<div class="empty"><div class="icon">🔍</div><p>No cars found for "<b>${q}</b>"</p></div>`; return; }
+    el.innerHTML = `<div class="car-grid">${cars.map(c => carCardHTML(c)).join('')}</div>`;
+  } catch {
+    el.innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>Search failed. Try again.</p></div>';
+  }
+}
+
+/* ── CAR DETAIL ── */
+async function openCar(id) {
+  openModal('carModal');
+  document.getElementById('carModalContent').innerHTML = '<div class="spinner"></div>';
+  try {
+    const res = await apiFetch(`/api/cars/${id}`);
+    if (!res.ok) throw new Error();
+    const { car, seller } = await res.json();
+    const extImg = car.images?.exterior ? `<img src="${BASE}${car.images.exterior}" alt="exterior" loading="lazy" onerror="this.parentElement.textContent='🚗'"/>` : '🚗';
+    const intImg = car.images?.interior ? `<img src="${BASE}${car.images.interior}" alt="interior" loading="lazy" onerror="this.parentElement.textContent='🪑'"/>` : '🪑';
+    const isMine = currentUser && seller._id === currentUser.id;
+    const sellerAvatarHTML = seller.avatar
+      ? `<img src="${BASE}${seller.avatar}" style="width:36px;height:36px;border-radius:50%;object-fit:cover"/>`
+      : `<div class="avatar-circle" style="width:36px;height:36px;font-size:13px">${(seller.firstName[0]+seller.lastName[0]).toUpperCase()}</div>`;
+
+    document.getElementById('carModalContent').innerHTML = `
+      <div class="detail-imgs">
+        <div class="detail-img">${extImg}</div>
+        <div class="detail-img">${intImg}</div>
+      </div>
+      <div class="detail-title">${car.manufacturer} ${car.model}</div>
+      <div class="detail-price">${formatPrice(car.price)}</div>
+      <div class="detail-specs">
+        <div class="spec-item"><div class="spec-label">Year</div><div class="spec-val">${car.year}</div></div>
+        <div class="spec-item"><div class="spec-label">Color</div><div class="spec-val">${car.color}</div></div>
+        <div class="spec-item"><div class="spec-label">Mileage</div><div class="spec-val">${Number(car.milage).toLocaleString()} km</div></div>
+        <div class="spec-item"><div class="spec-label">Engine</div><div class="spec-val">${car.engine}</div></div>
+        <div class="spec-item"><div class="spec-label">Horsepower</div><div class="spec-val">${car.hp} HP</div></div>
+        <div class="spec-item"><div class="spec-label">Status</div><div class="spec-val" style="color:${car.available ? 'var(--green)' : 'var(--red)'}">${car.available ? 'Available' : 'Sold'}</div></div>
+      </div>
+      <div class="seller-row">
+        ${sellerAvatarHTML}
+        <div><div class="seller-name">${seller.firstName} ${seller.lastName}</div><div class="seller-tag">Seller</div></div>
+      </div>
+      ${isMine ? `
+        <div style="display:flex;gap:10px;margin-bottom:10px">
+          <button class="nav-btn btn-ghost" style="flex:1" onclick="openEditCar('${car._id}',${JSON.stringify(car).replace(/"/g,'&quot;')})">Edit Listing</button>
+          <button class="nav-btn btn-danger" style="flex:1" onclick="deleteCar('${car._id}')">Delete</button>
+        </div>` : ''}
+      ${car.available && currentUser && !isMine ? `
+        <button class="form-btn amber" onclick="buyNow('${car._id}',${car.price})">Buy Now — ${formatPrice(car.price)}</button>` : ''}
+      ${!currentUser && car.available ? `
+        <button class="form-btn steel" onclick="closeModal('carModal');openAuth('login')">Sign In to Buy</button>` : ''}
+      ${!car.available && !isMine ? `<p style="text-align:center;color:var(--muted);font-size:14px;padding:12px 0">This car has already been sold.</p>` : ''}
+    `;
+  } catch {
+    document.getElementById('carModalContent').innerHTML = '<div class="empty"><p>Could not load car details.</p></div>';
+  }
+}
+
+/* ── BUY ── */
+async function buyNow(carId, price) {
+  if (!confirm(`Confirm purchase for ${formatPrice(price)}?`)) return;
+  const res = await apiFetch('/api/orders/', { method: 'POST', json: { carid: carId, price } });
+  const d = await res.json();
+  if (res.ok) {
+    toast('Order placed successfully! 🎉');
+    closeModal('carModal');
+    loadCars();
+  } else {
+    toast(d.message || 'Order failed', 'err');
+  }
+}
+
+/* ── LIST CAR ── */
+function openListModal() {
+  if (!currentUser) { openAuth('login'); return; }
+  openModal('listModal');
+}
+
+function updateFileName(inputId, spanId) {
+  const f = document.getElementById(inputId).files[0];
+  document.getElementById(spanId).textContent = f ? f.name : 'Choose photo';
+}
+
+async function doListCar() {
+  const fields = ['lcMake','lcModel','lcYear','lcPrice','lcColor','lcMilage','lcHp','lcEngine'];
+  const errEl = document.getElementById('listError');
+  errEl.style.display = 'none';
+  for (const f of fields) { if (!document.getElementById(f).value.trim()) { errEl.textContent = 'All fields are required.'; errEl.style.display = ''; return; } }
+  const ext = document.getElementById('lcExt').files[0];
+  const int_ = document.getElementById('lcInt').files[0];
+  if (!ext || !int_) { errEl.textContent = 'Both exterior and interior images are required.'; errEl.style.display = ''; return; }
+
+  const fd = new FormData();
+  fd.append('manufacturer', document.getElementById('lcMake').value.trim());
+  fd.append('model', document.getElementById('lcModel').value.trim());
+  fd.append('year', document.getElementById('lcYear').value);
+  fd.append('price', document.getElementById('lcPrice').value);
+  fd.append('color', document.getElementById('lcColor').value.trim());
+  fd.append('milage', document.getElementById('lcMilage').value);
+  fd.append('hp', document.getElementById('lcHp').value);
+  fd.append('engine', document.getElementById('lcEngine').value.trim());
+  fd.append('images', ext);
+  fd.append('images', int_);
+
+  try {
+    const res = await apiFetch('/api/cars/', { method: 'POST', body: fd });
+    const d = await res.json();
+    if (!res.ok) { errEl.textContent = d.message || 'Failed to list car.'; errEl.style.display = ''; return; }
+    toast('Car listed successfully! 🚗');
+    closeModal('listModal');
+    loadCars();
+  } catch { errEl.textContent = 'Network error'; errEl.style.display = ''; }
+}
+
+/* ── MY CARS ── */
+async function openMyCars() {
+  openModal('myCarsModal');
+  const el = document.getElementById('myCarsContent');
+  el.innerHTML = '<div class="spinner"></div>';
+  try {
+    const res = await apiFetch('/api/cars/my-cars');
+    const cars = await res.json();
+    if (!cars.length) { el.innerHTML = '<div class="empty"><div class="icon">🚗</div><p>You have no listings yet. <a href="#" onclick="closeModal(\'myCarsModal\');openListModal()" style="color:var(--amber)">List a car</a></p></div>'; return; }
+    el.innerHTML = `<div class="car-grid">${cars.map(c => carCardHTML(c, true)).join('')}</div>`;
+  } catch { el.innerHTML = '<div class="empty"><p>Failed to load your listings.</p></div>'; }
+}
+
+/* ── DELETE CAR ── */
+async function deleteCar(id) {
+  if (!confirm('Delete this listing? This cannot be undone.')) return;
+  const res = await apiFetch(`/api/cars/${id}`, { method: 'DELETE' });
+  if (res.ok) { toast('Listing deleted.'); closeModal('carModal'); loadCars(); }
+  else { const d = await res.json(); toast(d.message || 'Failed to delete', 'err'); }
+}
+
+/* ── ORDERS ── */
+async function openOrders() {
+  openModal('ordersModal');
+  const el = document.getElementById('ordersContent');
+  el.innerHTML = '<div class="spinner"></div>';
+  try {
+    const res = await apiFetch('/api/orders/list');
+    const orders = await res.json();
+    if (!orders.length) { el.innerHTML = '<div class="empty"><div class="icon">📋</div><p>No orders yet.</p></div>'; return; }
+    el.innerHTML = orders.map(o => {
+      const car = o.car || {};
+      const imgHTML = car.images?.exterior
+        ? `<img src="${BASE}${car.images.exterior}" alt="car"/>`
+        : '🚗';
+      return `<div class="order-card">
+        <div class="order-car-img">${imgHTML}</div>
+        <div class="order-info">
+          <div class="order-name">${car.manufacturer||''} ${car.model||''} ${car.year||''}</div>
+          <div class="order-date">${new Date(o.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>
+        </div>
+        <div>
+          <div class="order-price">${formatPrice(o.price)}</div>
+          <button class="nav-btn btn-danger" style="margin-top:6px;padding:5px 12px;font-size:12px" onclick="cancelOrder('${o.id}')">Cancel</button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch { el.innerHTML = '<div class="empty"><p>Failed to load orders.</p></div>'; }
+}
+
+async function cancelOrder(id) {
+  if (!confirm('Cancel this order?')) return;
+  const res = await apiFetch(`/api/orders/${id}`, { method: 'DELETE' });
+  if (res.ok) { toast('Order cancelled.'); openOrders(); loadCars(); }
+  else { const d = await res.json(); toast(d.message || 'Failed to cancel', 'err'); }
+}
+
+/* ── PROFILE ── */
+async function openProfile() {
+  openModal('profileModal');
+  renderProfileContent();
+}
+
+function renderProfileContent() {
+  const el = document.getElementById('profileContent');
+  const u = currentUser;
+  if (!u) return;
+  const initials = (u.firstName[0] + u.lastName[0]).toUpperCase();
+  const avatarHTML = u.avatar
+    ? `<div class="profile-avatar-lg"><img src="${BASE}${u.avatar}" alt="avatar"/></div>`
+    : `<div class="profile-avatar-lg">${initials}</div>`;
+
+  el.innerHTML = `
+    <div class="profile-header">
+      ${avatarHTML}
+      <div style="text-align:center">
+        <div style="font-size:20px;font-weight:600">${u.firstName} ${u.lastName}</div>
+        <div style="font-size:13px;color:var(--muted)">${u.email}</div>
+      </div>
+      <label class="form-file-label" for="avatarUpload" style="font-size:13px">📷 Change Avatar</label>
+      <input type="file" id="avatarUpload" accept="image/*" onchange="uploadAvatar(this)"/>
+    </div>
+    <div style="border-top:1px solid var(--navy-border);padding-top:20px;margin-bottom:20px">
+      <div style="font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:14px;font-weight:500">Update Profile</div>
+      <div class="form-row">
+        <div class="form-group"><label>First Name</label><input type="text" id="pfFirst" value="${u.firstName}"/></div>
+        <div class="form-group"><label>Last Name</label><input type="text" id="pfLast" value="${u.lastName}"/></div>
+      </div>
+      <div class="form-group"><label>Email</label><input type="email" id="pfEmail" value="${u.email}"/></div>
+      <div id="pfError" class="form-error" style="display:none"></div>
+      <div id="pfSuccess" class="form-success" style="display:none"></div>
+      <button class="form-btn steel" onclick="updateProfile()">Save Changes</button>
+    </div>
+    <button class="form-btn" style="background:transparent;border:1px solid var(--red);color:var(--red);margin-top:4px" onclick="doLogout()">Sign Out</button>
+  `;
+}
+
+async function uploadAvatar(input) {
+  const file = input.files[0]; if (!file) return;
+  const fd = new FormData(); fd.append('avatar', file);
+  const res = await apiFetch('/api/user/avatar', { method: 'PATCH', body: fd });
+  const d = await res.json();
+  if (res.ok) { currentUser = d.user; renderNav(); renderProfileContent(); toast('Avatar updated!'); }
+  else toast(d.message || 'Upload failed', 'err');
+}
+
+async function updateProfile() {
+  const errEl = document.getElementById('pfError');
+  const okEl = document.getElementById('pfSuccess');
+  errEl.style.display = 'none'; okEl.style.display = 'none';
+  const body = {
+    firstName: document.getElementById('pfFirst').value.trim(),
+    lastName: document.getElementById('pfLast').value.trim(),
+    email: document.getElementById('pfEmail').value.trim()
+  };
+  const res = await apiFetch('/api/user/profile', { method: 'PATCH', json: body });
+  const d = await res.json();
+  if (res.ok) {
+    currentUser = d.user; renderNav();
+    okEl.textContent = 'Profile updated!'; okEl.style.display = '';
+    toast('Profile updated!');
+  } else { errEl.textContent = d.message || 'Update failed'; errEl.style.display = ''; }
+}
+
+/* ── INIT ── */
+(async () => {
+  // try silent refresh on load (in case cookie still valid)
+  await refreshAccess();
+  if (accessToken) await fetchMe();
+  renderNav();
+  loadCars();
+})();
+</script>
+</body>
+</html>
